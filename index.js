@@ -1,8 +1,10 @@
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-  camera.position.set(-1000, 300, 0);
+  let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
+  camera.position.set(0, 300, -2000);
+
+  let controls = new THREE.OrbitControls(camera);
 
   let scene = new THREE.Scene();
 
@@ -15,21 +17,48 @@ function init() {
   scene.add(amb);
 
   let plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(1000, 1000),
-    new THREE.MeshPhongMaterial({color: 0x8b4513}));
+    new THREE.PlaneGeometry(10000, 10000),
+    new THREE.MeshPhongMaterial({ color: 0x8b4513 })
+  );
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
 
-  let lineGeo = new THREE.Geometry();
+  // 各座標の初期値
+  let x = 1000;
+  let y = 0;
+  let z = 0;
+  let deg = 0;
+  let rad = 0;
+  for (let i = 0; i < 72; i++) {
+    let lineGeo = new THREE.Geometry();
+    for (let k = 0; k < 800; k++) {
+      y = 0.0009 * (k + 1) * (k + 1);
+      x -= Math.cos(rad);
+      z -= Math.sin(rad);
+      let rand = Math.random() * 10;
+      if (rand < 1) {
+        if (y > 50) {
+          y = y - Math.random() * 1;
+        }
+        x = x - Math.random() * 1;
+        z = z - Math.random() * 1;
+      } else if (rand >= 1 && rand < 2) {
+        y = y + Math.random() * 1;
+        x = x + Math.random() * 1;
+        z = z + Math.random() * 1;
+      }
+      lineGeo.vertices.push(new THREE.Vector3(x, y, z));
+    }
+    let line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x000000 }));
+    scene.add(line);
+    y = 0;
+    deg += 5;
+    rad = deg * (Math.PI / 180);
+    x = 1000 * Math.cos(rad);
+    z = 1000 * Math.sin(rad);
+  }
 
-  lineGeo.vertices.push(new THREE.Vector3(150, 0, 0));
-  lineGeo.vertices.push(new THREE.Vector3(0, 400, 0));
-
-  let line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({color: 0x990000}));
-
-  scene.add(line);
-
-  const renderer = new THREE.WebGLRenderer({antialias: true});
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0xffffff, 1.0);
