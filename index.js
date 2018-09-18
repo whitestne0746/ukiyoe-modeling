@@ -29,8 +29,10 @@ function init() {
   let z = 0;
   let deg = 0;
   let rad = 0;
-  for (let i = 0; i < 72; i++) {
-    let lineGeo = new THREE.Geometry();
+  let points1 = [];
+  // let points2 = [];
+  for (let i = 0; i < 360; i++) {
+    // let lineGeo = new THREE.Geometry();
     for (let k = 0; k < 800; k++) {
       y = 0.0009 * (k + 1) * (k + 1);
       x -= Math.cos(rad);
@@ -38,25 +40,38 @@ function init() {
       let rand = Math.random() * 10;
       if (rand < 1) {
         if (y > 50) {
-          y = y - Math.random() * 1;
+          y = y - Math.random() * 10;
         }
         x = x - Math.random() * 1;
         z = z - Math.random() * 1;
       } else if (rand >= 1 && rand < 2) {
-        y = y + Math.random() * 1;
+        y = y + Math.random() * 10;
         x = x + Math.random() * 1;
         z = z + Math.random() * 1;
       }
-      lineGeo.vertices.push(new THREE.Vector3(x, y, z));
+      points1.push(new THREE.Vector3(x, y, z));
+      // lineGeo.vertices.push(new THREE.Vector3(x, y, z));
     }
-    let line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x000000 }));
-    scene.add(line);
+    // let line = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x000000 }));
+    // scene.add(line);
+    /*
+    if (i % 2 == 1) {
+      let material = new THREE.MeshLambertMaterial({ color: 0x00eeaa });
+      let mesh = new THREE.Mesh(new THREE.ConvexGeometry(points1), material);
+      scene.add(mesh);
+      points1 = [];
+    }
+    */
     y = 0;
-    deg += 5;
+    deg += 1;
     rad = deg * (Math.PI / 180);
     x = 1000 * Math.cos(rad);
     z = 1000 * Math.sin(rad);
   }
+
+  let material = new THREE.MeshLambertMaterial({ color: 0xc0c0c0 });
+  let mesh = new THREE.Mesh(new THREE.ConvexGeometry(points1), material);
+  scene.add(mesh);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
