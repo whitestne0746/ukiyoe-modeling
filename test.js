@@ -1,8 +1,8 @@
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
-  camera.position.set(0, 300, -2000);
+  let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000000);
+  camera.position.set(0, 1500, -20000);
 
   let controls = new THREE.OrbitControls(camera);
 
@@ -16,11 +16,17 @@ function init() {
   let amb = new THREE.AmbientLight('#464646');
   scene.add(amb);
 
-  // let texture = new THREE.ImageUtils.loadTexture('./pictures/fuji_texture.png');
+  let plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(100000, 100000),
+    new THREE.MeshPhongMaterial({ color: 0x8b4513 })
+  );
+  plane.rotation.x = -Math.PI / 2;
+  scene.add(plane);
 
-  let geometry = new THREE.CylinderGeometry(200, 1000, 1000, 36, 32, false);
-  let cylinder = new THREE.Mesh(
-    geometry,
+  let fujiHeight = 25000;
+  let geometry1 = new THREE.CylinderGeometry(6000, 40000, fujiHeight, 36, 32, false);
+  let fujiMount = new THREE.Mesh(
+    geometry1,
     new THREE.MeshPhongMaterial(
       {
         /*
@@ -28,24 +34,25 @@ function init() {
         bumpMap: texture,
         bumpScale: 0.05,
         */
-       color: 0xffffff,
+        color: 0xffff00,
       }
     )
   );
-  cylinder.overdraw = true;
-  scene.add(cylinder);
+  fujiMount.overdraw = true;
+  fujiMount.position.set(15000, fujiHeight / 2, 20000);
+  scene.add(fujiMount);
 
   let simplexNoise = new SimplexNoise();
-  for (var i = 0; i < geometry.vertices.length; i++) {
-    var v = geometry.vertices[i];
-    v.z = v.z + 30 * simplexNoise.noise(v.x / 50, v.y / 50);
-    v.y = v.y + 50 * simplexNoise.noise(v.z / 50, v.x / 50);
-    geometry.vertices[i] = v;
+  for (var i = 0; i < geometry1.vertices.length; i++) {
+    var v = geometry1.vertices[i];
+    // v.z = v.z + 30 * simplexNoise.noise(v.x / 50, v.y / 50);
+    v.y = v.y + 800 * simplexNoise.noise(v.z / 50, v.x / 50);
+    geometry1.vertices[i] = v;
   }
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(1440, 960);
   renderer.setClearColor(0x000000, 1.0);
 
   document.body.appendChild(renderer.domElement);
