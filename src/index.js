@@ -1,3 +1,5 @@
+import bridge from './bridge';
+
 window.addEventListener('DOMContentLoaded', init);
 
 let windowWidth = 800;
